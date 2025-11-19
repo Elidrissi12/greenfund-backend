@@ -5,15 +5,20 @@ import com.greenfund.greenfund_backend.model.dto.request.UpdateProjectRequest;
 import com.greenfund.greenfund_backend.model.dto.response.ProjectResponse;
 import com.greenfund.greenfund_backend.model.entity.Project;
 import com.greenfund.greenfund_backend.model.entity.User;
+import com.greenfund.greenfund_backend.model.enums.EnergyType;
 import com.greenfund.greenfund_backend.model.enums.ProjectStatus;
 import com.greenfund.greenfund_backend.repository.ProjectRepository;
 import com.greenfund.greenfund_backend.repository.UserRepository;
+import com.greenfund.greenfund_backend.repository.specification.ProjectSpecifications;
 import com.greenfund.greenfund_backend.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,6 +73,31 @@ public class ProjectService {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
         return convertToResponse(project);
+    }
+
+    public List<ProjectResponse> searchProjects(String keyword,
+                                                String city,
+                                                EnergyType energyType,
+                                                ProjectStatus status,
+                                                BigDecimal minTargetAmount,
+                                                BigDecimal maxTargetAmount,
+                                                BigDecimal minRaisedAmount,
+                                                BigDecimal maxRaisedAmount) {
+        Specification<Project> specification = ProjectSpecifications.build(
+                keyword,
+                city,
+                energyType,
+                status,
+                minTargetAmount,
+                maxTargetAmount,
+                minRaisedAmount,
+                maxRaisedAmount
+        );
+
+        return projectRepository.findAll(specification, Sort.by(Sort.Direction.DESC, "createdAt"))
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional

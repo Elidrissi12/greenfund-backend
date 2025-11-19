@@ -3,6 +3,7 @@ package com.greenfund.greenfund_backend.controller;
 import com.greenfund.greenfund_backend.model.dto.request.CreateProjectRequest;
 import com.greenfund.greenfund_backend.model.dto.request.UpdateProjectRequest;
 import com.greenfund.greenfund_backend.model.dto.response.ProjectResponse;
+import com.greenfund.greenfund_backend.model.enums.EnergyType;
 import com.greenfund.greenfund_backend.model.enums.ProjectStatus;
 import com.greenfund.greenfund_backend.service.ProjectService;
 import jakarta.validation.Valid;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -33,6 +35,29 @@ public class ProjectController {
         List<ProjectResponse> projects = status != null
                 ? projectService.getProjectsByStatus(status)
                 : projectService.getAllProjects();
+        return ResponseEntity.ok(projects);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ProjectResponse>> searchProjects(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) EnergyType energyType,
+            @RequestParam(required = false) ProjectStatus status,
+            @RequestParam(required = false) BigDecimal minTargetAmount,
+            @RequestParam(required = false) BigDecimal maxTargetAmount,
+            @RequestParam(required = false) BigDecimal minRaisedAmount,
+            @RequestParam(required = false) BigDecimal maxRaisedAmount) {
+        List<ProjectResponse> projects = projectService.searchProjects(
+                keyword,
+                city,
+                energyType,
+                status,
+                minTargetAmount,
+                maxTargetAmount,
+                minRaisedAmount,
+                maxRaisedAmount
+        );
         return ResponseEntity.ok(projects);
     }
 
