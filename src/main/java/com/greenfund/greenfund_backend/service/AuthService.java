@@ -3,6 +3,7 @@ package com.greenfund.greenfund_backend.service;
 import com.greenfund.greenfund_backend.model.dto.request.LoginRequest;
 import com.greenfund.greenfund_backend.model.dto.request.RegisterRequest;
 import com.greenfund.greenfund_backend.model.dto.response.AuthResponse;
+import com.greenfund.greenfund_backend.model.dto.response.UserResponse;
 import com.greenfund.greenfund_backend.model.entity.User;
 import com.greenfund.greenfund_backend.model.enums.Role;
 import com.greenfund.greenfund_backend.repository.UserRepository;
@@ -68,6 +69,24 @@ public class AuthService {
 
         return new AuthResponse(token, userPrincipal.getId(), userPrincipal.getName(),
                 userPrincipal.getEmail(), userPrincipal.getRole().name());
+    }
+
+    public UserResponse getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        
+        User user = userRepository.findById(userPrincipal.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        UserResponse response = new UserResponse();
+        response.setId(user.getId());
+        response.setName(user.getName());
+        response.setEmail(user.getEmail());
+        response.setRole(user.getRole());
+        response.setActive(user.getActive());
+        response.setCreatedAt(user.getCreatedAt());
+        
+        return response;
     }
 }
 

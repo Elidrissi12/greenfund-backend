@@ -77,6 +77,13 @@ public class AdminController {
         stats.put("activeProjects", projectService.getProjectsByStatus(ProjectStatus.ACTIVE).size());
         stats.put("completedProjects", projectService.getProjectsByStatus(ProjectStatus.COMPLETED).size());
         stats.put("totalUsers", userRepository.count());
+        
+        // Calculer le montant total investi
+        java.math.BigDecimal totalInvestedAmount = investmentService.getAllInvestments().stream()
+                .map(InvestmentResponse::getAmount)
+                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+        stats.put("totalInvestedAmount", totalInvestedAmount);
+        
         return ResponseEntity.ok(stats);
     }
 

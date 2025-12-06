@@ -3,10 +3,12 @@ package com.greenfund.greenfund_backend.controller;
 import com.greenfund.greenfund_backend.model.dto.request.LoginRequest;
 import com.greenfund.greenfund_backend.model.dto.request.RegisterRequest;
 import com.greenfund.greenfund_backend.model.dto.response.AuthResponse;
+import com.greenfund.greenfund_backend.model.dto.response.UserResponse;
 import com.greenfund.greenfund_backend.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +27,13 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<UserResponse> getCurrentUser() {
+        UserResponse response = authService.getCurrentUser();
         return ResponseEntity.ok(response);
     }
 }
