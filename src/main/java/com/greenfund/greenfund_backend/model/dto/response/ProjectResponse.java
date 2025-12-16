@@ -20,6 +20,7 @@ public class ProjectResponse {
     private ProjectStatus status;
     private Long ownerId;
     private String ownerName;
+    private String imageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

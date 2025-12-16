@@ -58,6 +58,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()  // Images accessibles publiquement
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/projects/**").authenticated()
                         .requestMatchers("/api/investments/**").authenticated()

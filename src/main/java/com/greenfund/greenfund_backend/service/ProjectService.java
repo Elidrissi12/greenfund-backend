@@ -30,6 +30,9 @@ public class ProjectService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private FileStorageService fileStorageService;
+
     @Transactional
     public ProjectResponse createProject(CreateProjectRequest request) {
         UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
@@ -149,6 +152,7 @@ public class ProjectService {
         response.setStatus(project.getStatus());
         response.setOwnerId(project.getOwner().getId());
         response.setOwnerName(project.getOwner().getName());
+        response.setImageUrl(fileStorageService.getFileUrl(project.getImageFilename()));
         response.setCreatedAt(project.getCreatedAt());
         response.setUpdatedAt(project.getUpdatedAt());
         return response;

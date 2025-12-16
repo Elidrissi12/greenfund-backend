@@ -70,6 +70,9 @@ public class Project {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column(name = "image_filename", length = 255)
+    private String imageFilename;
+
     // Relations
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Investment> investments;
